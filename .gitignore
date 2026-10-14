@@ -1,0 +1,7 @@
+# Gradle Cache
+.gradle
+# Build Files
+build
+
+#JAVA_HOME set script
+env.ps1
