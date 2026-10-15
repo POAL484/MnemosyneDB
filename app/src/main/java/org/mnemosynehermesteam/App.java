@@ -1,7 +1,14 @@
 package org.mnemosynehermesteam;
 
+import org.mnemosynehermesteam.server.NettyServer;
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("он раздувал злость в чайнике! копил ненависть, пар валил из ушей, выпуская ярость наружу, дружище! крики! кипящий гнев! ярость в маленьком чайнике");
+        try {
+            new NettyServer().run();
+        }
+        catch ( InterruptedException e ) {
+            System.out.println("Keyboard interrupted, closing netty server...");
+        }
     }
 }
