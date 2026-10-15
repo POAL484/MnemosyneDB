@@ -8,6 +8,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
+}
+
 application {
     // Define the main class for the application.
     mainClass = 'org.mnemosynehermesteam.App'
