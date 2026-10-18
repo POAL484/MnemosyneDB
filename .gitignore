@@ -1,7 +1,12 @@
 # Gradle Cache
 .gradle
+
 # Build Files
 build
+app/bin/
+
+# VSCode files
+.vscode
 
 #JAVA_HOME set script
 env.ps1
