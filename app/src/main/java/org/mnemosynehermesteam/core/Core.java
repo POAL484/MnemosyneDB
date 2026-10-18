@@ -8,38 +8,38 @@ import java.util.UUID;
 
 public class Core {
 
-    static final private Core core = new Core();
+  static final private Core core = new Core();
 
-    private final InMemoryStorage memory = new InMemoryStorage(); // по умолчанию LRU
-    private final DiskStorage disk = new DiskStorage();
+  private final InMemoryStorage memory = new InMemoryStorage(); // по умолчанию LRU
+  private final DiskStorage disk = new DiskStorage();
 
-    public static Core getCore() {
-        return core;
+  public static Core getCore() {
+    return core;
+  }
+
+  public CacheDTO readCache(UUID userId, String key) {
+    Optional<CacheDTO> fromMemory = memory.get(key);
+
+    if (fromMemory.isPresent()){
+      return fromMemory.get();
     }
 
-    public CacheDTO readCache(UUID userId, String key) {
-        Optional<CacheDTO> fromMemory = memory.get(key);
-
-        if (fromMemory.isPresent()){
-            return fromMemory.get();
-        }
-
-        CacheDTO fromDisk = disk.loadCacheDTO().get(key);
-        if (fromDisk != null){
-            memory.save(key, fromDisk);
-        }
-        return fromDisk;
+    CacheDTO fromDisk = disk.loadCacheDTO().get(key);
+    if (fromDisk != null){
+      memory.save(key, fromDisk);
     }
+    return fromDisk;
+  }
 
-    public void saveCache(CacheDTO cacheDTO, String key) {
-        memory.save(key, cacheDTO);
-        disk.save(key, cacheDTO);
-    }
+  public void saveCache(CacheDTO cacheDTO, String key) {
+    memory.save(key, cacheDTO);
+    disk.save(key, cacheDTO);
+  }
 
-    public CacheDTO deleteCache(String key) {
-        CacheDTO removed = memory.get(key).orElse(null);
-        memory.delete(key);
-        return removed;
-    }
+  public CacheDTO deleteCache(String key) {
+    CacheDTO removed = memory.get(key).orElse(null);
+    memory.delete(key);
+    return removed;
+  }
 
 }
