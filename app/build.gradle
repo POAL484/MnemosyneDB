@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
+    implementation 'com.google.code.gson:gson:2.14.0'
 }
 
 application {
