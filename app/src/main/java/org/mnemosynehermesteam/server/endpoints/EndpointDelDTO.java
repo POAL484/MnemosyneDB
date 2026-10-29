@@ -1,6 +1,5 @@
 package org.mnemosynehermesteam.server.endpoints;
 
-import java.util.Date;
 import java.util.UUID;
 
 import org.mnemosynehermesteam.core.CacheDTO;
@@ -36,19 +35,11 @@ public class EndpointDelDTO extends Endpoint {
 
         CacheDTO cacheDTO = Core.getCore().readCache(userId, reqData.key());
 
-        cacheDTO = new CacheDTO(UUID.randomUUID(), userId, new Date().getTime(), "Tomat!!"); // stub for module testing
-
-        if ( userId.equals(UUID.fromString("95c337df-789e-11ec-ae92-0242ac120002")) ) { // stub for module testing
-            cacheDTO = null;
-        }
-
         if ( cacheDTO == null ) {
             return Response.generateError(HttpResponseStatus.NOT_FOUND, "cache with %s key not found".formatted(reqData.key()));
         }
 
         Core.getCore().deleteCache(reqData.key());
-
-        System.out.printf("Deleted %s from storage\n", cacheDTO); // stub for module testing
 
         return Response.generateOK(cacheDTO);
     }
