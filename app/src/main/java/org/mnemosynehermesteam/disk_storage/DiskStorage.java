@@ -3,13 +3,18 @@ package org.mnemosynehermesteam.disk_storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DiskStorage {
   Path filePath = Path.of("cache_data.csv");
+  public void save(UUID UserId, Object cacheObject) {
+    try {
+      String line = UserId + "," + cacheObject.toString();
+      Files.writeString(filePath, line);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
   public void saveCache(Map<String, String> cacheMap) {
     try {
       List<String> lines = new ArrayList<>();
