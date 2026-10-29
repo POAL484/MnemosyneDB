@@ -39,8 +39,6 @@ public class EndpointSetDTO extends Endpoint {
 
         CacheDTO cacheDTO = new CacheDTO(userId, UUID.randomUUID(), new Date().getTime(), reqData.val());
 
-        System.out.printf("Writed %s to storage\n", cacheDTO); // stub for module testing
-
         Core.getCore().saveCache(cacheDTO, reqData.key());
 
         return Response.generateOK(cacheDTO);
