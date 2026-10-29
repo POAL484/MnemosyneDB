@@ -3,12 +3,10 @@ package org.mnemosynehermesteam.server.endpoints;
 import java.util.Date;
 import java.util.UUID;
 
-import org.mnemosynehermesteam.AppCore;
 import org.mnemosynehermesteam.core.CacheDTO;
+import org.mnemosynehermesteam.core.Core;
+import org.mnemosynehermesteam.server.DataManipulationUtils;
 import org.mnemosynehermesteam.server.Response;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -20,30 +18,30 @@ public class EndpointSetDTO extends Endpoint {
 
     @Override
     public Response handle(FullHttpRequest request) {
-        
-        SetDTORequestBody reqData;
-        try {
-            reqData = new Gson().fromJson(request.content().toString(CharsetUtil.UTF_8), SetDTORequestBody.class);
-        } catch ( JsonSyntaxException e ) {
-            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request");
+
+        SetDTORequestBody reqData = DataManipulationUtils.parseGson(request.content().toString(CharsetUtil.UTF_8), SetDTORequestBody.class);
+
+        if ( reqData == null ) {
+            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request: JSON syntax error");
+        }
+        if ( reqData.key() == null ) {
+            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request: key is null or not passed");
+        }
+        if ( reqData.val() == null ) {
+            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request: val is null, use DELETE to remove");
         }
 
-        if ( checkFieldsIsnotNull(reqData) ) { return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request"); }
+        UUID userId = DataManipulationUtils.authorizate(request.headers());
 
-        if ( !request.headers().contains("user") ) { return Response.generateError(HttpResponseStatus.UNAUTHORIZED, "'User' header is not provided"); }
-
-        UUID userId;
-        try {
-            userId = UUID.fromString(request.headers().get("user"));
-        } catch ( IllegalArgumentException e ) {
-            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad user id provided");
+        if ( userId == null ) {
+            return Response.generateError(HttpResponseStatus.UNAUTHORIZED, "Unauthorized: header 'user' must be uuid4");
         }
 
         CacheDTO cacheDTO = new CacheDTO(userId, UUID.randomUUID(), new Date().getTime(), reqData.val());
 
         System.out.printf("Writed %s to storage\n", cacheDTO); // stub for module testing
 
-        AppCore.getCore().saveCache(cacheDTO, reqData.key());
+        Core.getCore().saveCache(cacheDTO, reqData.key());
 
         return Response.generateOK(cacheDTO);
 
