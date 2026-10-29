@@ -5,3 +5,5 @@ build
 
 #JAVA_HOME set script
 env.ps1
+out/
+*.class
