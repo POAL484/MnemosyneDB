@@ -4,6 +4,12 @@ import java.util.UUID;
 
 public class Core {
 
+    static final private Core core = new Core();
+
+    public static Core getCore() {
+        return core;
+    }
+
     public CacheDTO readCache(UUID userId, String key) {
         return null;
     }
