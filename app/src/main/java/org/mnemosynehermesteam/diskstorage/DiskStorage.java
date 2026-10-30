@@ -1,5 +1,3 @@
-package org.mnemosynehermesteam.diskstorage;
-
 import org.mnemosynehermesteam.core.CacheDTO;
 
 import java.io.IOException;

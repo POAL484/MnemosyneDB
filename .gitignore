@@ -1,9 +1,15 @@
 # Gradle Cache
-.gradle/
+.gradle
 
 # Build Files
 build
 app/bin/
+
+# VSCode files
+.vscode
+
+#JAVA_HOME set script
+env.ps1
 out/
 *.class
 
@@ -13,6 +19,3 @@ out/
 
 # JAVA_HOME set script
 env.ps1
-
-# Local user data
-userdata.csv
