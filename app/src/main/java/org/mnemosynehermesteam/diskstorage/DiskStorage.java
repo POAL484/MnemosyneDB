@@ -1,4 +1,4 @@
-package org.mnemosynehermesteam.disk_storage;
+package org.mnemosynehermesteam.diskstorage;
 
 import org.mnemosynehermesteam.core.CacheDTO;
 

@@ -1,8 +1,7 @@
-package org.mnemosynehermesteam.disk_storage;
+package org.mnemosynehermesteam.diskstorage;
 
 import org.mnemosynehermesteam.core.CacheDTO;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
