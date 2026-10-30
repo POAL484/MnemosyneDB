@@ -12,3 +12,4 @@ app/bin/
 env.ps1
 out/
 *.class
+.idea/

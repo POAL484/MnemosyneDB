@@ -45,34 +45,4 @@ public class DiskStorage {
     }
     return cacheMap;
   }
-  public void saveCache(Map<String, String> cacheMap) {
-    Path filePath = Path.of("cachedata.csv");
-    try {
-      List<String> lines = new ArrayList<>();
-      for (Map.Entry<String, String> entry : cacheMap.entrySet()) {
-        lines.add(entry.getKey() + "," + entry.getValue());
-      }
-      Files.write(filePath, lines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-  public Map<String, String> loadCache() {
-    Path filePath = Path.of("cachedata.csv");
-    Map<String, String> cacheMap = new HashMap<>();
-    try {
-      if (Files.exists(filePath)) {
-        List<String> lines = Files.readAllLines(filePath);
-        for (String line : lines) {
-          String[] parts = line.split(",", 2);
-          if (parts.length == 2) {
-            cacheMap.put(parts[0], parts[1]);
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return cacheMap;
-  }
 }
