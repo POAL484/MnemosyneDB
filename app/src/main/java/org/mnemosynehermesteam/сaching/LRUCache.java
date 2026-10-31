@@ -1,18 +1,20 @@
-package org.mnemosynehermesteam.Caching;
+package org.mnemosynehermesteam.сaching;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LFUCache {
+public class LRUCache {
+
+  private static final long NO_COUNT = 0;
 
   private final int capacity;
   private final Map<String, String> cache = new HashMap<>();
   private final MinHeap heap = new MinHeap();
   private long timer = 0;
 
-  public LFUCache(int capacity) {
+  public LRUCache(int capacity) {
     if (capacity <= 0) throw new IllegalArgumentException("capacity должна быть > 0");
     this.capacity = capacity;
   }
@@ -25,6 +27,7 @@ public class LFUCache {
     return answer;
   }
 
+
   public synchronized void add(String query, String answer) {
     if (cache.containsKey(query)) {
       cache.put(query, answer);
@@ -35,13 +38,14 @@ public class LFUCache {
       deleteMoreUnuseful();
     }
     cache.put(query, answer);
-    heap.insert(query, 1, timer++);
+    heap.insert(query, NO_COUNT, timer++);
   }
 
+
   public synchronized void deleteMoreUnuseful() {
-    MinHeap.Node min = heap.extractMin();
-    if (min != null) {
-      cache.remove(min.key());
+    MinHeap.Node oldest = heap.extractMin();
+    if (oldest != null) {
+      cache.remove(oldest.key());
     }
   }
 
@@ -55,7 +59,6 @@ public class LFUCache {
   }
 
   private void touch(String query) {
-    MinHeap.Node node = heap.get(query);
-    heap.update(query, node.count() + 1, timer++);
+    heap.update(query, NO_COUNT, timer++);
   }
 }
