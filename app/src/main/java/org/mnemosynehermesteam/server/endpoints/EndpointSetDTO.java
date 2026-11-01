@@ -37,6 +37,10 @@ public class EndpointSetDTO extends Endpoint {
             return Response.generateError(HttpResponseStatus.UNAUTHORIZED, "Unauthorized: header 'user' must be uuid4");
         }
 
+        if ( !(reqData.val() instanceof Long) && !(reqData.val() instanceof Double) && !(reqData.val() instanceof String) && !(reqData.val() instanceof Boolean) ) {
+            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request: unsupported cacheObject type");
+        }
+
         CacheDTO cacheDTO = new CacheDTO(userId, UUID.randomUUID(), new Date().getTime(), reqData.val());
 
         Core.getCore().saveCache(cacheDTO, reqData.key());
