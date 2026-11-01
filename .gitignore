@@ -10,3 +10,6 @@ app/bin/
 
 #JAVA_HOME set script
 env.ps1
+out/
+*.class
+.idea/
