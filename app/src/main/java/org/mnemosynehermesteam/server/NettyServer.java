@@ -10,12 +10,22 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
-public class NettyServer {
-    
-    public void run() throws InterruptedException {
+public class NettyServer implements Runnable {
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+    EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    EventLoopGroup workerGroup = new NioEventLoopGroup();
+    
+    @Override
+    public void run() {
+        try {
+            runSync();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void runSync() throws InterruptedException {
 
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -35,10 +45,14 @@ public class NettyServer {
 
             serverChannel.closeFuture().sync();
         } finally {
-            bossGroup.shutdownGracefully().sync();
-            workerGroup.shutdownGracefully().sync();
-            System.out.println("[netty] Server closed!");
+            close();
         }
 
+    }
+
+    public void close() throws InterruptedException {
+        bossGroup.shutdownGracefully().sync();
+        workerGroup.shutdownGracefully().sync();
+        System.out.println("[netty] Server closed!");
     }
 }
