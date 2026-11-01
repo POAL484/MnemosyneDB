@@ -1,4 +1,4 @@
-package org.mnemosynehermesteam.сaching;
+package org.mnemosynehermesteam.caching;
 
 import java.util.ArrayList;
 import java.util.HashMap;
