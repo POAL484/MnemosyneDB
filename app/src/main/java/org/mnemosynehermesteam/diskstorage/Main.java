@@ -20,7 +20,7 @@ public class Main {
     diskStorage.save("b1", dto2);
     diskStorage.save("c1", dto3);
 
-    Map<String, CacheDTO> mapexample = diskStorage.loadAllCacheDTO();
+    Map<String, CacheDTO> mapexample = diskStorage.loadCacheDTO();
 
     for (Map.Entry<String, CacheDTO> entry : mapexample.entrySet()) {
       System.out.println(entry.getKey() + " " + entry.getValue());
