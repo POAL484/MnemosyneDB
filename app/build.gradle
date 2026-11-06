@@ -12,3 +12,7 @@ application {
     // Define the main class for the application.
     mainClass = 'org.mnemosynehermesteam.App'
 }
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
+    implementation 'org.lz4:lz4-java:1.8.0'
+}
