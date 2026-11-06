@@ -122,7 +122,7 @@ public class DiskStorage {
     }
     return new CacheDTO(commonObject.id, commonObject.userId, commonObject.ts, value);
   }
-  public Map<String, CacheDTO> loadAllCacheDTO() {
+  public Map<String, CacheDTO> loadCacheDTO() {
     Map<String, CacheDTO> cacheMap = new HashMap<>();
     try {
       if (Files.exists(filePath)) {
