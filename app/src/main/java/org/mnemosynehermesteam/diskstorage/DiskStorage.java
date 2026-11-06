@@ -1,16 +1,33 @@
 package org.mnemosynehermesteam.diskstorage;
 
+import org.xerial.snappy.Snappy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mnemosynehermesteam.core.CacheDTO;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 public class DiskStorage {
+
+  static String compress(String json) throws IOException {
+    byte[] bytes = json.getBytes();
+    return Base64.getEncoder().encodeToString(Snappy.compress(bytes));
+  }
+
+  static String decompress(String encoded) throws IOException {
+    byte[] bytes = Base64.getDecoder().decode(encoded);
+    return new String(Snappy.uncompress(bytes));
+  }
+
   Path filePath = Path.of("userdata.jsonl");
+
+
   static ObjectMapper mapper = new ObjectMapper();
+
+
   public record CommonObject (
       String  key,
       UUID id,
@@ -19,9 +36,13 @@ public class DiskStorage {
       String typeOfCacheObject,
       Object cacheObject
   ){}
+
+
   static CommonObject createCommonObject(String key, CacheDTO cacheDTO, String typeOfCacheObject) {
     return new CommonObject(key, cacheDTO.id(), cacheDTO.userId(), cacheDTO.ts(), typeOfCacheObject, cacheDTO.cacheObject());
   }
+
+
   static CommonObject CommonObjWithCheckingTypes(String key, CacheDTO cacheDTO) {
     if (cacheDTO.cacheObject() == null) {
       return createCommonObject(key, cacheDTO, "Null");
@@ -52,11 +73,16 @@ public class DiskStorage {
     }
     throw new IllegalArgumentException();
   }
+
+
+
+
   public void save(String key, CacheDTO cacheDTO) {
     try {
       CommonObject commonObject = CommonObjWithCheckingTypes(key, cacheDTO);
       String json = mapper.writeValueAsString(commonObject);
-      Files.writeString(filePath, json + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+      String compressedjson = compress(json);
+      Files.writeString(filePath, compressedjson + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -102,7 +128,8 @@ public class DiskStorage {
       if (Files.exists(filePath)) {
         List<String> lines = Files.readAllLines(filePath);
         for (String line : lines) {
-          CommonObject commonObject = mapper.readValue(line, CommonObject.class);
+          String json = decompress(line);
+          CommonObject commonObject = mapper.readValue(json, CommonObject.class);
           CacheDTO value = createValueObj(commonObject);
           cacheMap.put(commonObject.key, value);
         }

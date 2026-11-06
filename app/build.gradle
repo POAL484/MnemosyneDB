@@ -14,5 +14,5 @@ application {
 }
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
-    implementation 'org.lz4:lz4-java:1.8.0'
+    implementation 'org.xerial.snappy:snappy-java:1.1.10.8'
 }
