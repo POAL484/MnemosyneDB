@@ -14,15 +14,17 @@ public class InMemoryStorage {
     this.cacheable = cacheable;
   }
 
+  public InMemoryStorage(CacheAlgorithm algorithm) {
+    this(algorithm, DEFAULT_CAPACITY);
+  }
+
   public InMemoryStorage(CacheAlgorithm algorithm, int capacity) {
     this(algorithm.create(capacity));
   }
 
   public InMemoryStorage() {
-    this(CacheAlgorithm.LRU, DEFAULT_CAPACITY);
+    this(CacheAlgorithm.LRU);
   }
-
-
 
 
   public void save(String key, CacheDTO value) {
