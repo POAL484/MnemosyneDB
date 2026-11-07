@@ -4,6 +4,10 @@ import org.mnemosynehermesteam.caching.InMemoryStorage;
 import org.mnemosynehermesteam.config.MnemosyneConfig;
 import org.mnemosynehermesteam.diskstorage.DiskStorage;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,13 +16,20 @@ public class Core {
     static final private Core core = new Core();
 
     private final InMemoryStorage memory;
-    private final DiskStorage disk = new DiskStorage();
+    private final DiskStorage disk;
     private final boolean diskEnabled;
 
     private Core(){
         MnemosyneConfig config = new MnemosyneConfig();
         this.memory = new InMemoryStorage(config.getAlgorithm());
         this.diskEnabled = config.isDiskStorageEnabled();
+        if (diskEnabled){
+            this.disk = new DiskStorage();
+            loadFromDisk();
+        }
+        else{
+            this.disk = null;
+        }
     }
 
     public static Core getCore() {
