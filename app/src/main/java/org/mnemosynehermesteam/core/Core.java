@@ -67,4 +67,15 @@ public class Core {
         return removed;
     }
 
+    private void loadFromDisk() {
+        Map<String, CacheDTO> fromDisk = disk.loadCacheDTO();
+
+        List<Map.Entry<String, CacheDTO>> entries = new ArrayList<>(fromDisk.entrySet());
+        entries.sort(Comparator.comparingLong(entry -> entry.getValue().ts()));
+
+        for (Map.Entry<String, CacheDTO> entry : entries) {
+            memory.save(entry.getKey(), entry.getValue());
+        }
+    }
+
 }
