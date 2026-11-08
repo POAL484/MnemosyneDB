@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j 
 public abstract class Cache<V> implements Cacheable<String, V> {
 
   private final int capacity;
@@ -12,7 +15,10 @@ public abstract class Cache<V> implements Cacheable<String, V> {
   private long timer = 0;
 
   protected Cache(int capacity) {
-    if (capacity <= 0) throw new IllegalArgumentException("capacity должна быть > 0");
+    if (capacity <= 0) {
+      log.error("Invalid configuration: capacity must be more than 0");
+      throw new IllegalArgumentException("capacity должна быть > 0");
+    }
     this.capacity = capacity;
   }
 
@@ -26,6 +32,7 @@ public abstract class Cache<V> implements Cacheable<String, V> {
   public synchronized Optional<V> get(String query) {
     V answer = cache.get(query);
     if (answer != null) {
+      log.debug("inMemory cache {} found", query);
       touch(query);
     }
     return Optional.ofNullable(answer);
@@ -36,13 +43,16 @@ public abstract class Cache<V> implements Cacheable<String, V> {
     if (cache.containsKey(query)) {
       cache.put(query, answer);
       touch(query);
+      log.debug("cache already has key {}, updated to {}", query, answer);
       return;
     }
     if (cache.size() >= capacity) {
-      deleteMoreUnuseful();
+      MinHeap.Node deletedNode = deleteMoreUnuseful();
+      log.debug("inMemory capacity overflows, deleted cache with key: {}", deletedNode.key());
     }
     cache.put(query, answer);
     heap.insert(query, initialCount(), timer++);
+    log.debug("inserted new cache {} with value {}", query, answer);
   }
 
   @Override
@@ -56,11 +66,12 @@ public abstract class Cache<V> implements Cacheable<String, V> {
     return cache.size();
   }
 
-  private void deleteMoreUnuseful() {
+  private MinHeap.Node deleteMoreUnuseful() {
     MinHeap.Node min = heap.extractMin();
     if (min != null) {
       cache.remove(min.key());
     }
+    return min;
   }
 
   private void touch(String query) {

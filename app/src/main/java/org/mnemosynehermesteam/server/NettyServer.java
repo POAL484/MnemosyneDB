@@ -9,7 +9,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j 
 public class NettyServer implements Runnable {
 
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -17,10 +19,10 @@ public class NettyServer implements Runnable {
     
     @Override
     public void run() {
+        log.info("Starting server at thread");
         try {
             runSync();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -41,7 +43,7 @@ public class NettyServer implements Runnable {
 
             Channel serverChannel = serverBootstrap.bind(5445).sync().channel();
 
-            System.out.println("[netty] Server started on 5445 port!");
+            log.info("Server started on 5445 port!");
 
             serverChannel.closeFuture().sync();
         } finally {
@@ -51,8 +53,9 @@ public class NettyServer implements Runnable {
     }
 
     public void close() throws InterruptedException {
+        log.info("Closing server...");
         bossGroup.shutdownGracefully().sync();
         workerGroup.shutdownGracefully().sync();
-        System.out.println("[netty] Server closed!");
+        log.info("Server closed");
     }
 }

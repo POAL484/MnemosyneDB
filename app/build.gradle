@@ -9,6 +9,10 @@ repositories {
 dependencies {
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
     implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
