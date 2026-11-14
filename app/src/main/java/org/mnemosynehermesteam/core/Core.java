@@ -35,7 +35,7 @@ public class Core {
         if (fromDisk != null){
             memory.save(key, fromDisk);
         }
-        log.debug("Loaded cache {} from disk: {}", key, fromDisk.cacheObject());
+        log.debug("Loaded cache {} from disk: {}", key, fromDisk);
         return fromDisk;
     }
 

@@ -1,9 +1,12 @@
 package org.mnemosynehermesteam.server;
 
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.ToNumberPolicy;
 
@@ -28,6 +31,16 @@ public class DataManipulationUtils {
             log.debug("Json Syntax Exception while parsing: {}", data);
             return null;
         }
+    }
+
+    public static JsonElement serialiseObject(Object obj) {
+        if ( obj instanceof Set o ) {
+            JsonElement setAsList = defaultGson.toJsonTree(o);
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.add("$set", setAsList);
+            return jsonObj;
+        }
+        return defaultGson.toJsonTree(obj);
     }
 
     public static UUID authorizate(HttpHeaders headers) {

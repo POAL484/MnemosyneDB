@@ -7,6 +7,7 @@ import java.util.Map;
 import org.mnemosynehermesteam.server.endpoints.Endpoint;
 import org.mnemosynehermesteam.server.endpoints.EndpointDelDTO;
 import org.mnemosynehermesteam.server.endpoints.EndpointGetDTO;
+import org.mnemosynehermesteam.server.endpoints.EndpointMHRL;
 import org.mnemosynehermesteam.server.endpoints.EndpointSetDTO;
 
 import com.google.gson.Gson;
@@ -33,7 +34,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     HttpHandler() {
         ENDPOINTS.put(new EndpointEntry("/", HttpMethod.GET), new EndpointGetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointSetDTO());
+        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL());
         ENDPOINTS.put(new EndpointEntry("/", HttpMethod.PUT), new EndpointSetDTO());
         ENDPOINTS.put(new EndpointEntry("/", HttpMethod.DELETE), new EndpointDelDTO());
     }
