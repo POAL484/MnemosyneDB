@@ -9,6 +9,9 @@ repositories {
 dependencies {
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
     implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'at.yawk.lz4:lz4-java:1.14.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
+    implementation 'org.xerial.snappy:snappy-java:1.1.10.12'
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

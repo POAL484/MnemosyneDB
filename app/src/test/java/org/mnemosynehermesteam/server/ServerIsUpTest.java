@@ -11,21 +11,21 @@ import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 
 public class ServerIsUpTest {
-    void testConnection() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5445"))
-                .GET()
-                .build();
-        client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
+  void testConnection() throws IOException, InterruptedException {
+    HttpClient client = HttpClient.newHttpClient();
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("http://localhost:5445"))
+        .GET()
+        .build();
+    client.send(request, HttpResponse.BodyHandlers.ofString());
+  }
 
-    @Test
-    public void serverIsUpTest() throws InterruptedException {
-        NettyServer server = new NettyServer();
-        Thread serverThread = new Thread(server);
-        serverThread.start();
-        assertDoesNotThrow(() -> testConnection());
-        server.close();
-    }
+  @Test
+  public void serverIsUpTest() throws InterruptedException {
+    NettyServer server = new NettyServer();
+    Thread serverThread = new Thread(server);
+    serverThread.start();
+    assertDoesNotThrow(() -> testConnection());
+    server.close();
+  }
 }
