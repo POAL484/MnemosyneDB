@@ -10,9 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-@Slf4j 
+@Slf4j
 public class DiskStorage {
   Path filePath = Path.of("userdata.csv");
+
   public void save(String key, CacheDTO cacheDTO) {
     try {
       UUID id = cacheDTO.id();
@@ -26,6 +27,7 @@ public class DiskStorage {
       log.error("Disk storage save caused IOException", e);
     }
   }
+
   public Map<String, CacheDTO> loadCacheDTO() {
     Path filePath = Path.of("userdata.csv");
     Map<String, CacheDTO> cacheMap = new HashMap<>();
@@ -37,14 +39,26 @@ public class DiskStorage {
           if (parts.length == 5) {
             String key = parts[0];
             UUID id;
-            try { id = UUID.fromString(parts[1]); }
-            catch ( IllegalArgumentException e ) { log.warn("Invalid id: \"{}\", skipping", parts[1]); continue; }
+            try {
+              id = UUID.fromString(parts[1]);
+            } catch (IllegalArgumentException e) {
+              log.warn("Invalid id: \"{}\", skipping", parts[1]);
+              continue;
+            }
             UUID userId;
-            try { userId = UUID.fromString(parts[2]); }
-            catch ( IllegalArgumentException e ) { log.warn("Invalid userId: \"{}\", skipping", parts[2]); continue; }
+            try {
+              userId = UUID.fromString(parts[2]);
+            } catch (IllegalArgumentException e) {
+              log.warn("Invalid userId: \"{}\", skipping", parts[2]);
+              continue;
+            }
             long ts;
-            try { ts = Long.parseLong(parts[3]); }
-            catch ( NumberFormatException e ) { log.warn("Invalid timestamp: \"{}\", skipping", parts[3]); continue; }
+            try {
+              ts = Long.parseLong(parts[3]);
+            } catch (NumberFormatException e) {
+              log.warn("Invalid timestamp: \"{}\", skipping", parts[3]);
+              continue;
+            }
             Object cacheObject = parts[4];
             cacheMap.put(key, new CacheDTO(id, userId, ts, cacheObject));
           } else {
