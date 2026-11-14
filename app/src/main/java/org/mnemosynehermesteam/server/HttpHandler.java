@@ -33,10 +33,11 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     final Map<EndpointEntry, Endpoint> ENDPOINTS = new HashMap<>();
 
     HttpHandler() {
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.GET), new EndpointGetDTO());
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.GET), new EndpointGetDTO());
         ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.PUT), new EndpointSetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.DELETE), new EndpointDelDTO());
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.POST), new EndpointSetDTO());
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.PUT), new EndpointSetDTO());
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.DELETE), new EndpointDelDTO());
     }
 
     private FullHttpResponse createResponseText(HttpResponseStatus status, String bodyText, HttpHeaders headers) {

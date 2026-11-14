@@ -17,11 +17,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-public class ServerTest {
+public class ServerTestLegacy {
     HttpResponse<String> makeRequest(String method, String reqBody) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5445"))
+                .uri(URI.create("http://localhost:5445/legacy"))
                 .header("user", UUID.randomUUID().toString())
                 .method(method, BodyPublishers.ofString(reqBody))
                 .build();
@@ -69,7 +69,7 @@ public class ServerTest {
     HttpResponse<String> makeRequestInvalidHeader(String method, String reqBody) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5445"))
+                .uri(URI.create("http://localhost:5445/legacy"))
                 .header("user", "not valid uuid")
                 .method(method, BodyPublishers.ofString(reqBody))
                 .build();
@@ -79,7 +79,7 @@ public class ServerTest {
     HttpResponse<String> makeRequestNoHeader(String method, String reqBody) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5445"))
+                .uri(URI.create("http://localhost:5445/legacy"))
                 .method(method, BodyPublishers.ofString(reqBody))
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
