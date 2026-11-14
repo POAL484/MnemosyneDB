@@ -47,7 +47,7 @@ public class Core {
       return null;
     }
 
-    CacheDTO fromDisk = disk.loadCacheDTO().get(key);
+    CacheDTO fromDisk = disk.loadCacheDTO().get(new FullKey(userId, key));
     if (fromDisk != null){
       memory.save(key, fromDisk);
     }
@@ -57,7 +57,7 @@ public class Core {
   public void saveCache(CacheDTO cacheDTO, String key) {
     memory.save(key, cacheDTO);
     if (diskEnabled) {
-      disk.save(key, cacheDTO);
+      disk.save(new FullKey(cacheDTO.userId(), key), cacheDTO);
     }
   }
 
