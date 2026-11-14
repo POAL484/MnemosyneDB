@@ -138,59 +138,6 @@ public class DiskStorage {
     );
   }
 
-  public void delete(FullKey fullKey) {
-    Path tempFile = null;
-
-    try {
-      if (!Files.exists(filePath)) {
-        return;
-      }
-
-      List<String> lines = Files.readAllLines(filePath);
-      List<String> remainingLines = new ArrayList<>();
-
-      for (String line : lines) {
-        String json = decompress(line);
-
-        CommonObject commonObject =
-            mapper.readValue(json, CommonObject.class);
-
-        FullKey currentKey = new FullKey(
-            commonObject.userId(),
-            commonObject.key()
-        );
-
-        if (!currentKey.equals(fullKey)) {
-          remainingLines.add(line);
-        }
-      }
-
-      Path absolutePath = filePath.toAbsolutePath();
-
-      tempFile = Files.createTempFile(
-          absolutePath.getParent(),
-          "userdata-",
-          ".tmp"
-      );
-
-      Files.write(tempFile, remainingLines);
-      Files.move(tempFile, absolutePath);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-
-    } finally {
-      if (tempFile != null) {
-        try {
-          Files.deleteIfExists(tempFile);
-
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-  }
-
   public Map<FullKey, CacheDTO> loadCacheDTO() {
     Map<FullKey, CacheDTO> cacheMap = new HashMap<>();
 
