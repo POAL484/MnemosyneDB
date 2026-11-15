@@ -1,4 +1,4 @@
-package org.mnemosynehermesteam.disk_storage;
+package org.mnemosynehermesteam.diskstorage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mnemosynehermesteam.core.CacheDTO;

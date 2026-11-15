@@ -7,14 +7,14 @@ import org.mnemosynehermesteam.core.FullKey;
 import java.io.IOException;
 import java.util.*;
 
-public class Main {
+public class DiskStorageCompressionDemo {
   public static void main(String[] args) throws IOException {
     DiskStorage diskStorage = new DiskStorage();
 
     UUID id = UUID.randomUUID();
     UUID userId = UUID.randomUUID();
     long ts = 1000;
-    String largeText = "gugugagagugugagagugugagagugugaga".repeat(100_000);
+    String largeText = "gugugagagugugagagugugagagugugaga".repeat(500_000);
     CacheDTO largeDto = new CacheDTO(id, userId, ts, largeText);
     ObjectMapper mapper = new ObjectMapper();
     CommonObject object = diskStorage.CommonObjWithCheckingTypes(new FullKey(id, "largetext"), largeDto);
