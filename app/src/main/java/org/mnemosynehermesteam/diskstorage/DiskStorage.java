@@ -62,33 +62,18 @@ public class DiskStorage {
     return new String(decompressed);
   }
 
-  CommonObject createCommonObject(
-      FullKey fullKey,
-      CacheDTO cacheDTO,
-      String typeOfCacheObject
-  ) {
-    return new CommonObject(
-        fullKey.key(),
-        cacheDTO.id(),
-        fullKey.userId(),
-        cacheDTO.ts(),
-        typeOfCacheObject,
-        cacheDTO.cacheObject()
-    );
-  }
-
   CommonObject CommonObjWithCheckingTypes(
       FullKey fullKey,
       CacheDTO cacheDTO
   ) {
     if (cacheDTO.cacheObject() instanceof Long) {
-      return createCommonObject(fullKey, cacheDTO, "Long");
+      return new CommonObject(fullKey, cacheDTO, "Long");
 
     } else if (cacheDTO.cacheObject() instanceof Set<?>) {
-      return createCommonObject(fullKey, cacheDTO, "Set");
+      return new CommonObject(fullKey, cacheDTO, "Set");
     }
 
-    return createCommonObject(fullKey, cacheDTO, "AnotherType");
+    return new CommonObject(fullKey, cacheDTO, "AnotherType");
   }
 
   public void save(FullKey fullKey, CacheDTO cacheDTO) {
