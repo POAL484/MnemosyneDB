@@ -11,9 +11,17 @@ repositories {
 dependencies {
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
     implementation 'com.google.code.gson:gson:2.14.0'
+
+    testImplementation platform('org.junit:junit-bom:5.11.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 application {
     // Define the main class for the application.
     mainClass = 'org.mnemosynehermesteam.App'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
