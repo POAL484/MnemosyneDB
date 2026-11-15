@@ -68,13 +68,13 @@ public class Core {
   }
 
     private void loadFromDisk() {
-        Map<String, CacheDTO> fromDisk = disk.loadCacheDTO();
+        Map<FullKey, CacheDTO> fromDisk = disk.loadCacheDTO();
 
-        List<Map.Entry<String, CacheDTO>> entries = new ArrayList<>(fromDisk.entrySet());
+        List<Map.Entry<FullKey, CacheDTO>> entries = new ArrayList<>(fromDisk.entrySet());
         entries.sort(Comparator.comparingLong(entry -> entry.getValue().ts()));
 
-        for (Map.Entry<String, CacheDTO> entry : entries) {
-            memory.save(entry.getKey(), entry.getValue());
+        for (Map.Entry<FullKey, CacheDTO> entry : entries) {
+            memory.save(entry.getKey().key(), entry.getValue());
         }
     }
 
