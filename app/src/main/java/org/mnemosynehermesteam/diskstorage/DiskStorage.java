@@ -161,7 +161,7 @@ public class DiskStorage {
       }
 
       if (hasExpiredLines) {
-        Path temp = Path.of("userdata.tmp");
+        Path temp = path.resolveSibling("userdata.tmp");
         Files.write(temp, newLines, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
         try {
           Files.move(temp, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
