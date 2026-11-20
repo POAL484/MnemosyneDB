@@ -7,7 +7,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mnemosynehermesteam.core.CacheDTO;
 import org.mnemosynehermesteam.core.FullKey;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,5 +100,27 @@ class DiskStorageTest {
           actualDTO.cacheObject()
       );
     }
+  }
+
+  @ParameterizedTest
+  @EnumSource(CompressionAlgorithm.class)
+  void expiredLine(CompressionAlgorithm algorithm) throws IOException {
+    Path testFile = tempDir.resolve("userdata.jsonl");
+    DiskStorage diskStorage = new DiskStorage(testFile, algorithm);
+    UUID userId = UUID.randomUUID();
+    FullKey expiredKey = new FullKey(userId, "1");
+    FullKey liveKey = new FullKey(userId, "2");
+    CacheDTO value = new CacheDTO(UUID.randomUUID(), userId, 1L, "pupupu");
+
+    diskStorage.save(expiredKey, value, Duration.ofMinutes(1));
+    diskStorage.save(liveKey, value);
+
+    List<String> lines = Files.readAllLines(testFile);
+    String liveLine = lines.get(1);
+    lines.set(0, lines.get(0).replaceFirst("^[A-Z0-9]+:[0-9]+:", algorithm.name() + ":0:"));
+    Files.write(testFile, lines);
+
+    assertEquals(Map.of(liveKey, value), diskStorage.loadCacheDTO());
+    assertEquals(List.of(liveLine), Files.readAllLines(testFile));
   }
 }

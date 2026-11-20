@@ -6,9 +6,12 @@ import org.mnemosynehermesteam.config.MnemosyneConfig;
 import org.mnemosynehermesteam.core.FullKey;
 
 import java.io.IOException;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class DiskStorage {
@@ -29,29 +32,20 @@ public class DiskStorage {
     this.compressionAlgorithm = compressionAlgorithm;
   }
 
-  private String compress(String json) throws IOException {
-
+  private String compress(String json, Long timeLimit) throws IOException {
+    String header = compressionAlgorithm.name();
+    if (timeLimit != null) {
+      header += ":" + timeLimit;
+    }
     if (compressionAlgorithm == CompressionAlgorithm.NONE) {
-      return "NONE:" + json;
+      return header + ":" + json;
     }
 
-    byte[] bytes = json.getBytes();
-    byte[] compressed = compressionAlgorithm.compress(bytes);
-
-    return compressionAlgorithm.name() + ":"
-        + Base64.getEncoder().encodeToString(compressed);
+    byte[] compressed = compressionAlgorithm.compress(json.getBytes());
+    return header + ":" + Base64.getEncoder().encodeToString(compressed);
   }
 
-  private String decompress(String encoded) throws IOException {
-
-    int separator = encoded.indexOf(':');
-
-    String algorithmName = encoded.substring(0, separator);
-    String data = encoded.substring(separator + 1);
-
-    CompressionAlgorithm algorithm;
-    algorithm = CompressionAlgorithm.valueOf(algorithmName);
-
+  private String decompress(CompressionAlgorithm algorithm, String data) throws IOException {
     if (algorithm == CompressionAlgorithm.NONE) {
       return data;
     }
@@ -77,20 +71,30 @@ public class DiskStorage {
   }
 
   public void save(FullKey fullKey, CacheDTO cacheDTO) {
+    save(fullKey, cacheDTO, null);
+  }
+
+  public void save(FullKey fullKey, CacheDTO cacheDTO, Duration ttl) {
+    if (ttl != null && (ttl.isZero() || ttl.isNegative())) {
+      throw new IllegalArgumentException("TTL must be positive");
+    }
+
+    Long timeLimit = null;
+    if (ttl != null) {
+      timeLimit = Instant.now().plus(ttl).toEpochMilli();
+    }
     try {
       CommonObject commonObject =
           CommonObjWithCheckingTypes(fullKey, cacheDTO);
-
       String json = mapper.writeValueAsString(commonObject);
-      String compressedjson = compress(json);
+      String line = compress(json, timeLimit);
 
       Files.writeString(
           filePath,
-          compressedjson + "\n",
+          line + "\n",
           StandardOpenOption.CREATE,
           StandardOpenOption.APPEND
       );
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -125,29 +129,47 @@ public class DiskStorage {
 
   public Map<FullKey, CacheDTO> loadCacheDTO() {
     Map<FullKey, CacheDTO> cacheMap = new HashMap<>();
+    if (!Files.exists(filePath)) {
+      return cacheMap;
+    }
+
+    Path path = filePath.toAbsolutePath();
+    long now = Instant.now().toEpochMilli();
+    boolean hasExpiredLines = false;
 
     try {
-      if (Files.exists(filePath)) {
-        List<String> lines = Files.readAllLines(filePath);
+      List<String> newLines = new ArrayList<>();
+      for (String line : Files.readAllLines(path)) {
+        int separator = line.indexOf(':');
 
-        for (String line : lines) {
-          String json = decompress(line);
-
-          CommonObject commonObject =
-              mapper.readValue(json, CommonObject.class);
-
-          CacheDTO value = createValueObj(commonObject);
-
-          FullKey fullKey = new FullKey(
-              commonObject.userId(),
-              commonObject.key()
-          );
-
-          cacheMap.put(fullKey, value);
+        CompressionAlgorithm algorithm = CompressionAlgorithm.valueOf(line.substring(0, separator));
+        String data = line.substring(separator + 1);
+        int nextSeparator = data.indexOf(':');
+        if (nextSeparator > 0 && !data.startsWith("{")) {
+          long timeLimit = Long.parseLong(data.substring(0, nextSeparator));
+          if (timeLimit <= now) {
+            hasExpiredLines = true;
+            continue;
+          }
+          data = data.substring(nextSeparator + 1);
         }
+
+        String json = decompress(algorithm, data);
+        CommonObject commonObject = mapper.readValue(json, CommonObject.class);
+        cacheMap.put(commonObject.fullKey(), createValueObj(commonObject));
+        newLines.add(line);
       }
 
-    } catch (IOException e) {
+      if (hasExpiredLines) {
+        Path temp = Path.of("userdata.tmp");
+        Files.write(temp, newLines, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        try {
+          Files.move(temp, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+          Files.deleteIfExists(temp);
+        }
+      }
+    } catch (IOException | IllegalArgumentException e) {
       e.printStackTrace();
     }
 

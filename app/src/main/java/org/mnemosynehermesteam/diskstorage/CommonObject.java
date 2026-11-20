@@ -23,4 +23,8 @@ public record CommonObject(
           cacheDTO.cacheObject()
       );
   }
+
+  FullKey fullKey() {
+    return new FullKey(userId, key);
+  }
 }

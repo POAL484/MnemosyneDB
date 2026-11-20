@@ -5,6 +5,7 @@ import org.mnemosynehermesteam.core.CacheDTO;
 import org.mnemosynehermesteam.core.FullKey;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 
 public class DiskStorageCompressionDemo {
@@ -37,9 +38,9 @@ public class DiskStorageCompressionDemo {
     CacheDTO dto2 = new CacheDTO(id, userId, ts, new ArrayList<>(List.of("gugugaga", "3")));
     CacheDTO dto3 = new CacheDTO(id, userId, ts, new HashSet<>(Set.of(1, 2, 3, 4)));
 
-    diskStorage.save(new FullKey(id, "a1"), dto1);
-    diskStorage.save(new FullKey(id, "b1"), dto2);
-    diskStorage.save(new FullKey(id, "c1"), dto3);
+    diskStorage.save(new FullKey(id, "a1"), dto1, Duration.ofSeconds(10));
+    diskStorage.save(new FullKey(id, "b1"), dto2, Duration.ofSeconds(30));
+    diskStorage.save(new FullKey(id, "c1"), dto3, Duration.ofSeconds(60));
 
     Map<FullKey, CacheDTO> mapexample = diskStorage.loadCacheDTO();
 
