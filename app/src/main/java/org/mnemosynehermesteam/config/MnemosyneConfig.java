@@ -1,7 +1,6 @@
 package org.mnemosynehermesteam.config;
 
 import org.mnemosynehermesteam.caching.CacheAlgorithm;
-import org.mnemosynehermesteam.diskstorage.CompressionAlgorithm;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +40,5 @@ public class MnemosyneConfig {
   public boolean isDiskStorageEnabled() {
     String value = props.getProperty("storage.disk.enabled", "false");
     return Boolean.parseBoolean(value.trim());
-  }
-  public CompressionAlgorithm getCompressionAlgorithm() {
-    String value = props.getProperty("storage.compression.algorithm", "NONE");
-    return CompressionAlgorithm.valueOf(value.trim().toUpperCase());
   }
 }

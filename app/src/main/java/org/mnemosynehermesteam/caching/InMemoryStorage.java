@@ -3,6 +3,7 @@ package org.mnemosynehermesteam.caching;
 import org.mnemosynehermesteam.core.CacheDTO;
 
 import java.util.Optional;
+import java.time.Duration;
 
 public class InMemoryStorage {
 
@@ -30,6 +31,8 @@ public class InMemoryStorage {
   public void save(String key, CacheDTO value) {
     cacheable.put(key, value);
   }
+
+  public void save(String key, CacheDTO value, Duration ttl) { cacheable.put(key, value, ttl); }
 
   public Optional<CacheDTO> get(String key) {
     return cacheable.get(key);

@@ -60,7 +60,11 @@ public abstract class Cache<V> implements Cacheable<String, V> {
     MinHeap.Node min = heap.extractMin();
     if (min != null) {
       cache.remove(min.key());
+      onEvict(min.key());
     }
+  }
+
+  protected void onEvict(String key) {
   }
 
   private void touch(String query) {

@@ -1,6 +1,7 @@
 package org.mnemosynehermesteam.caching;
 
 import java.util.Optional;
+import java.time.Duration;
 
 public interface Cacheable<K, V> {
 
@@ -11,4 +12,10 @@ public interface Cacheable<K, V> {
   boolean delete(K key);
 
   int size();
+
+  default void put(K key, V value, Duration ttl) {
+    throw new UnsupportedOperationException(
+            "TTL is not supported by this cache"
+    );
+  }
 }
