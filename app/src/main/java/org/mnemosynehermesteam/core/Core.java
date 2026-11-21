@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.time.Duration;
 
 public class Core {
 
@@ -59,6 +60,20 @@ public class Core {
         if (diskEnabled) {
             disk.save(key, cacheDTO);
         }
+    }
+
+    public void saveCache(CacheDTO cacheDTO, String key, Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            throw new IllegalArgumentException("TTL must be positive");
+        }
+
+        if (diskEnabled) {
+            throw new UnsupportedOperationException(
+                    "TTL with disk storage is not implemented yet"
+            );
+        }
+
+        memory.save(key, cacheDTO, ttl);
     }
 
     public CacheDTO deleteCache(String key) {
