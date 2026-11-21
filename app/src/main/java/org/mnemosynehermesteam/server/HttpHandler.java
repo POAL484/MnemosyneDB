@@ -6,10 +6,7 @@ import java.util.Map;
 
 import org.mnemosynehermesteam.core.Core;
 import org.mnemosynehermesteam.server.endpoints.Endpoint;
-import org.mnemosynehermesteam.server.endpoints.EndpointDelDTO;
-import org.mnemosynehermesteam.server.endpoints.EndpointGetDTO;
 import org.mnemosynehermesteam.server.endpoints.EndpointMHRL;
-import org.mnemosynehermesteam.server.endpoints.EndpointSetDTO;
 
 import com.google.gson.Gson;
 
@@ -34,11 +31,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     final Map<EndpointEntry, Endpoint> ENDPOINTS = new HashMap<>();
 
     public HttpHandler(Core core) {
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.GET), new EndpointGetDTO(core));
         ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL(core));
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.POST), new EndpointSetDTO(core));
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.PUT), new EndpointSetDTO(core));
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.DELETE), new EndpointDelDTO(core));
     }
 
     private FullHttpResponse createResponseText(HttpResponseStatus status, String bodyText, HttpHeaders headers) {
