@@ -2,7 +2,7 @@ name: Tests and build
 
 on:
   push:
-    branches: [ "requestlang" ]
+    branches: [ "dev/mvp-0-2" ]
 
 jobs:
   unit-tests:
@@ -41,13 +41,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
       
       - name: Build
-        run: ./gradlew distZip
+        run: ./gradlew distZip distTar
 
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: MnemosyneDB
-          path: app/build/distributions/*.zip
+          path: app/build/distributions/*
 
 
 
