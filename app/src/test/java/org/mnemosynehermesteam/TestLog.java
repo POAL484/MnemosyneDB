@@ -10,19 +10,19 @@ public class TestLog {
     public TestLog(Logger log, String testName) {
         this.log = log;
         this.testName = testName;
-        LoggerForTests.testStart(log, testName);
+        LoggerTestsUtils.testStart(log, testName);
     }
 
     public void startPart(String partName) {
         this.partName = partName;
-        LoggerForTests.testPartStart(log, testName, partName);
+        LoggerTestsUtils.testPartStart(log, testName, partName);
     }
 
     public void partPassed() {
-        LoggerForTests.testPartPassed(log, testName, partName);
+        LoggerTestsUtils.testPartPassed(log, testName, partName);
     }
 
     public void testPassed() {
-        LoggerForTests.testPassed(log, testName);
+        LoggerTestsUtils.testPassed(log, testName);
     }
 }

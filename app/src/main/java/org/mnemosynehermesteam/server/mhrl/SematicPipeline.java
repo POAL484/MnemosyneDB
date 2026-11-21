@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors;
 
 import org.mnemosynehermesteam.core.CacheDTO;
 import org.mnemosynehermesteam.core.Core;
@@ -17,7 +17,7 @@ import org.mnemosynehermesteam.core.Core;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j 
-public class ManipulateWithObject {
+public class SematicPipeline {
 
     private final Core core;
     private final UUID userId;
@@ -26,22 +26,22 @@ public class ManipulateWithObject {
     private boolean isAnyType = false;
     private BiFunction<ManipObject<Object>, MHRLRequestBody, MHRLOperationResult> anyTypeFunction = null;
 
-    private final List<ManipulateWithObjectTypedFunc<? extends Object>> funcs = new LinkedList<>();
+    private final List<SematicPipelineTypedFunc<? extends Object>> funcs = new LinkedList<>();
 
-    private final Map<String, ManipulateWithObjectTypedPredicate<? extends Object>> predicates = new HashMap<>();
+    private final Map<String, SematicPipelineTypedPredicate<? extends Object>> predicates = new HashMap<>();
 
     private Function<ManipObject<Object>, MHRLOperationResult> onNull = null;
 
     private Object defaultVal = null;
 
-    public ManipulateWithObject(Core core, UUID userId, String key) {
+    public SematicPipeline(Core core, UUID userId, String key) {
         this.core = core;
         this.userId = userId;
         this.key = key;
     }
 
     public <T> void attachType(Class<T> clazz, BiFunction<ManipObject<T>, MHRLRequestBody, MHRLOperationResult> lambda) {
-        funcs.add(new ManipulateWithObjectTypedFunc<>(clazz, lambda));
+        funcs.add(new SematicPipelineTypedFunc<>(clazz, lambda));
     }
 
     public void attachAnyType(BiFunction<ManipObject<Object>, MHRLRequestBody, MHRLOperationResult> lambda) {
@@ -50,7 +50,7 @@ public class ManipulateWithObject {
     }
 
     public <T> void attachTypeAndPredict(Class<T> clazz, Predicate<ManipObject<T>> pred, BiFunction<ManipObject<T>, MHRLRequestBody, MHRLOperationResult> lambda) {
-        predicates.put(clazz.getName(), new ManipulateWithObjectTypedPredicate<>(clazz, pred));
+        predicates.put(clazz.getName(), new SematicPipelineTypedPredicate<>(clazz, pred));
         attachType(clazz, lambda);
     }
 
@@ -75,11 +75,12 @@ public class ManipulateWithObject {
             core.saveCache(cacheDTO, key);
         }
         log.debug("starting for {} cache with {} type and {} operation", key, cacheDTO.cacheObject().getClass().getName(), op.operationName());
-        log.debug("Operation {} has assignables: {}", op.operationName(), funcs.stream().map(f -> f.clazz.getName()).collect(Collectors.toList()));
-        for ( ManipulateWithObjectTypedFunc<? extends Object> f : funcs ) {
+        // log.debug("Operation {} has assignables: {}", op.operationName(), funcs.stream().map(f -> f.clazz.getName()).collect(Collectors.toList()));
+        for ( SematicPipelineTypedFunc<? extends Object> f : funcs ) {
             if ( f.clazz.isAssignableFrom(cacheDTO.cacheObject().getClass()) ) {
                 if ( predicates.containsKey(f.clazz.getName()) ) {
                     if ( !predicates.get(f.clazz.getName()).lambda.test(new ManipObject<>(core, cacheDTO, key, userId)) ) {
+                        log.debug("Predicate failed for {}", op.operationName());
                         return MHRLOperationResult.generateTypesMismatch(op.operationName(), key);
                     }
                 }

@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 public abstract class MHRLOperation {
 
-    abstract public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key);
+    abstract public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key);
 
     abstract public MHRLSyntaxParseResult syntaxParse(MHRLRequestBody reqData);
 

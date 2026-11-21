@@ -23,7 +23,7 @@ public class Core {
     private final DiskStorage disk;
     private final boolean diskEnabled;
 
-    private Core(){
+    public Core(){
         MnemosyneConfig config = new MnemosyneConfig();
         this.memory = new InMemoryStorage(config.getAlgorithm());
         this.diskEnabled = config.isDiskStorageEnabled();
@@ -65,7 +65,7 @@ public class Core {
         log.debug("Save cache {} with val {} to memory and disk", key, cacheDTO.cacheObject());
         memory.save(key, cacheDTO);
         if (diskEnabled) {
-            disk.save(key, cacheDTO);
+            disk.save(new FullKey(cacheDTO.userId(), key), cacheDTO);
         }
     }
 
@@ -73,16 +73,8 @@ public class Core {
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             throw new IllegalArgumentException("TTL must be positive");
         }
-
-        if (diskEnabled) {
-            throw new UnsupportedOperationException(
-                    "TTL with disk storage is not implemented yet"
-            );
-        }
-
         memory.save(key, cacheDTO, ttl);
-            disk.save(new FullKey(cacheDTO.userId(), key), cacheDTO);
-        }
+        disk.save(new FullKey(cacheDTO.userId(), key), cacheDTO, ttl);
     }
 
     public CacheDTO deleteCache(String key) {

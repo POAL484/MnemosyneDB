@@ -18,6 +18,8 @@ public class NettyServer implements Runnable {
 
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
+
+    private boolean isUp = false;
     
     private final Core core;
 
@@ -52,9 +54,11 @@ public class NettyServer implements Runnable {
             Channel serverChannel = serverBootstrap.bind(5445).sync().channel();
 
             log.info("Server started on 5445 port!");
+            isUp = true;
 
             serverChannel.closeFuture().sync();
         } finally {
+            isUp = false;
             close();
         }
 
@@ -65,5 +69,9 @@ public class NettyServer implements Runnable {
         bossGroup.shutdownGracefully().sync();
         workerGroup.shutdownGracefully().sync();
         log.info("Server closed");
+    }
+
+    public boolean isUp() {
+        return isUp;
     }
 }

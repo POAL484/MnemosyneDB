@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j 
 public class TLRUCache<V> extends LRUCache<V> {
 
     private final Map<String, Instant> expirationTimes = new HashMap<>();
@@ -53,6 +56,7 @@ public class TLRUCache<V> extends LRUCache<V> {
 
         if (expirationTime != null &&
                 !Instant.now().isBefore(expirationTime)) {
+            log.debug("Cache with key {} expired when geting, removing", key);
             delete(key);
             return Optional.empty();
         }
@@ -70,6 +74,7 @@ public class TLRUCache<V> extends LRUCache<V> {
             Map.Entry<String, Instant> entry = iterator.next();
 
             if (!now.isBefore(entry.getValue())) {
+                log.debug("TLRU found expired: {} = {}", entry.getKey(), entry.getValue());
                 super.delete(entry.getKey());
                 iterator.remove();
             }

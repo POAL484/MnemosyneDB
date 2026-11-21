@@ -19,6 +19,7 @@ dependencies {
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     testCompileOnly 'org.projectlombok:lombok:1.18.48'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
     testImplementation 'ch.qos.logback:logback-classic:1.5.16'
@@ -27,6 +28,10 @@ dependencies {
 application {
     mainClass = 'org.mnemosynehermesteam.App'
     applicationName = "mnemosyneDB"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 tasks.named('test') {

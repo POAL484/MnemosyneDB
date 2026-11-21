@@ -4,12 +4,34 @@ NoSQL key-value база данных на Java. Смотрите также htt
 
 > Мнемосина — это древнегреческая богиня памяти и языка, титанида, дочь Урана и Геи
 
-# Запуск
+# Запуск в Development режиме
 
-Только в Development режиме:
 ```sh
 ./gradlew run
 ```
+
+# Тесты
+
+```sh
+./gradlew test
+```
+
+# Сборка
+
+```sh
+./gradlew distZip distTar
+```
+Собранные `zip` и `tar` архивы будут находиться `app/build/distributions/`
+
+# Настройка
+
+В папке `resources` - `mnemosyne.properties`
+
+| Ключ | Описание | Поддерживаемые значения | По умолч. |
+| :- | - | - | - |
+| `cache.algorithm` | Алгоритм для кэша в оперативной памяти | `LRU` `LFU` `TLRU` | `LRU` |
+| `storage.disk.enabled` | Сохранять и загружать ли кэш на диск | `false` `true` | `false` |
+| `storage.compression.algorithm` | Алгортм сжатия для сохранения на диск | `NONE` `SNAPPY` `GZIP` `LZ4` | `NONE` |
 
 # Поддерживаемые типы хранения
 

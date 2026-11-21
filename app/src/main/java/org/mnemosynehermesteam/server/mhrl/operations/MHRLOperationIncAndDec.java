@@ -9,8 +9,8 @@ import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
 import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 import org.mnemosynehermesteam.server.mhrl.MHRLSyntaxParseResult;
 import org.mnemosynehermesteam.server.mhrl.ManipObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObjectBuilder;
+import org.mnemosynehermesteam.server.mhrl.SematicPipeline;
+import org.mnemosynehermesteam.server.mhrl.SematicPipelineBuilder;
 
 enum OperationIncDec {
     INC("INC"), DEC("DEC");
@@ -64,8 +64,8 @@ public class MHRLOperationIncAndDec extends MHRLOperation {
     protected String operationName() { return operation.opName; }
 
     @Override
-    public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key) {
-        return new ManipulateWithObjectBuilder(core, userId, key)
+    public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key) {
+        return new SematicPipelineBuilder(core, userId, key)
                                             .addDefault(Long.valueOf(0))
                                             .forClass(Long.class, (manip, req) -> handleLong(manip, req))
                                             .forClass(Double.class, (manip, req) -> handleDouble(manip, req))

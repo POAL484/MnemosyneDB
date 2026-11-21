@@ -24,7 +24,7 @@ public class EndpointGetDTO extends Endpoint {
     @Override
     public Response handle(FullHttpRequest request) {
         
-        log.debug("Handling [GET] / with request body: {}", request.content().toString(CharsetUtil.UTF_8)); // TODO перенести в HttpHandler
+        log.debug("Handling [GET] / with request body: {}", request.content().toString(CharsetUtil.UTF_8));
         
         GetDTORequestBody reqData = DataManipulationUtils.parseGson(request.content().toString(CharsetUtil.UTF_8), GetDTORequestBody.class);
 

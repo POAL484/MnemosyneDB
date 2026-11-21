@@ -19,6 +19,9 @@ import org.mnemosynehermesteam.server.mhrl.operations.MHRLOperationSRem;
 import org.mnemosynehermesteam.server.mhrl.operations.MHRLOperationSet;
 import org.mnemosynehermesteam.server.mhrl.operations.MHRLOperationSize;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j 
 public class MHRL {
     
     Core core;
@@ -54,7 +57,10 @@ public class MHRL {
         MHRLOperation op = OPS.get(opName);
         if ( op == null ) return MHRLOperationResult.generateErr(-2, "unknown MHRL operation: %s".formatted(opName));
         MHRLSyntaxParseResult syntaxRes = op.syntaxParse(mhrlRequestBody);
-        if ( !syntaxRes.status() ) return MHRLOperationResult.generateErr(syntaxRes.errCode(), syntaxRes.errDescription());
+        if ( !syntaxRes.status() ) {
+            log.debug("Syntax error {} found in request {}", syntaxRes.errCode(), mhrlRequestBody.toString());
+            return MHRLOperationResult.generateErr(syntaxRes.errCode(), syntaxRes.errDescription());
+        }
         return op.makeManipulateWithObject(core, userId, mhrlRequestBody.key()).start(op, mhrlRequestBody);
     }
 

@@ -11,8 +11,8 @@ import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
 import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 import org.mnemosynehermesteam.server.mhrl.MHRLSyntaxParseResult;
 import org.mnemosynehermesteam.server.mhrl.ManipObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObjectBuilder;
+import org.mnemosynehermesteam.server.mhrl.SematicPipeline;
+import org.mnemosynehermesteam.server.mhrl.SematicPipelineBuilder;
 
 public class MHRLOperationSize extends MHRLOperation {
 
@@ -34,8 +34,8 @@ public class MHRLOperationSize extends MHRLOperation {
     protected String operationName() { return "SIZE"; }
 
     @Override
-    public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key) {
-        return new ManipulateWithObjectBuilder(core, userId, key)
+    public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key) {
+        return new SematicPipelineBuilder(core, userId, key)
                                             .forClass(Collection.class, (manip, req) -> handleCollection(manip, req))
                                             .forClass(Map.class, (manip, req) -> handleMap(manip, req))
                                             .forClass(String.class, (manip, req) -> handleString(manip, req))

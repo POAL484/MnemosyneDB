@@ -66,6 +66,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         }
         
         Response resp;
+        log.debug("Started handling [{}] {}", endpointEntry.method(), endpointEntry.uri());
         try {
             resp = ENDPOINTS.get(endpointEntry).handle(req);
         } catch ( Exception e ) {
@@ -73,6 +74,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             sendRespToChannel(ctx, createResponseJson(HttpResponseStatus.INTERNAL_SERVER_ERROR, Response.generateError(HttpResponseStatus.INTERNAL_SERVER_ERROR, "Internal server error("), new DefaultHttpHeaders()));
             return;
         }
+        log.debug("Successfully handled [{}] {}", endpointEntry.method(), endpointEntry.uri());
 
         if ( resp.respData() instanceof String ) {
             sendRespToChannel(ctx, createResponseText(resp.status(), (String) resp.respData(), new DefaultHttpHeaders()));

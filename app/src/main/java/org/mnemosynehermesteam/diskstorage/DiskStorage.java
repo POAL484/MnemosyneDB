@@ -28,6 +28,7 @@ public class DiskStorage {
 
     this.filePath = Path.of("userdata.jsonl");
     compressionAlgorithm = config.getCompressionAlgorithm();
+    log.info("Disk storage will work with {} compression algorithm", compressionAlgorithm.toString());
   }
 
   DiskStorage(Path filePath, CompressionAlgorithm compressionAlgorithm) {
@@ -133,6 +134,7 @@ public class DiskStorage {
   public Map<FullKey, CacheDTO> loadCacheDTO() {
     Map<FullKey, CacheDTO> cacheMap = new HashMap<>();
     if (!Files.exists(filePath)) {
+      log.info("Files not exists while loadingCache, returning empty map");
       return cacheMap;
     }
 
@@ -173,7 +175,7 @@ public class DiskStorage {
         }
       }
     } catch (IOException | IllegalArgumentException e) {
-      e.printStackTrace();
+      log.error("Exception caused while loading cache", e);
     }
 
     return cacheMap;

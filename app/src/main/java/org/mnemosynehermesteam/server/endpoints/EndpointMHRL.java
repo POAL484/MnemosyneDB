@@ -39,15 +39,18 @@ public class EndpointMHRL extends Endpoint {
         }
 
         if ( !mhrl.containsOperation(reqData.op()) ) {
+            log.debug("Unknown operation found while handling MHRL request");
             return Response.generateBadRequestWithCode("Unknown operation: %s".formatted(reqData.op()), -2);
         }
 
         MHRLOperationResult res = mhrl.makeMHRLRequest(reqData.op(), userId, reqData);
 
         if ( !res.status() ) {
+            log.debug("HTTP MHRL handler found error in MHRL Result");
             return Response.generateBadRequestWithCode(res.errDescription(), res.code());
         }
 
+        log.debug("HTTP MHRL handler found OK MHRL Result");
         return Response.generateOK(res.jsonObj());
     }
     

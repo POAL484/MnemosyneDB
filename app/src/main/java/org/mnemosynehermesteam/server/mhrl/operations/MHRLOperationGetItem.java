@@ -13,8 +13,8 @@ import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
 import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 import org.mnemosynehermesteam.server.mhrl.MHRLSyntaxParseResult;
 import org.mnemosynehermesteam.server.mhrl.ManipObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObjectBuilder;
+import org.mnemosynehermesteam.server.mhrl.SematicPipeline;
+import org.mnemosynehermesteam.server.mhrl.SematicPipelineBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,8 +53,8 @@ public class MHRLOperationGetItem extends MHRLOperation {
     protected String operationName() { return "GETITEM"; }
 
     @Override
-    public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key) {
-        return new ManipulateWithObjectBuilder(core, userId, key)
+    public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key) {
+        return new SematicPipelineBuilder(core, userId, key)
                                             .forClass(List.class, (manip, req) -> handleList(manip, req))
                                             .forClass(Map.class, (manip, req) -> handleMap(manip, req))
                                             .build();

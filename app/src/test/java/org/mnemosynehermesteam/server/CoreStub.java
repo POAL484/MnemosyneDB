@@ -8,6 +8,7 @@ import org.mnemosynehermesteam.core.CacheDTO;
 import org.mnemosynehermesteam.core.Core;
 
 public class CoreStub extends Core {
+    CoreStub() {}
 
     private final Map<String, CacheDTO> dbMap = new HashMap<>();
     

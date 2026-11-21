@@ -11,7 +11,7 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mnemosynehermesteam.LoggerForTests;
+import org.mnemosynehermesteam.LoggerTestsUtils;
 import org.mnemosynehermesteam.TestLog;
 
 import com.google.gson.JsonObject;
@@ -19,7 +19,7 @@ import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j 
-public class ServerMHRLTestFull {
+public class ServerMHRLTest {
 
     static final CoreStub coreStub = new CoreStub();
     static NettyServer server;
@@ -33,7 +33,7 @@ public class ServerMHRLTestFull {
     final Integer[] TEST_SET_EXPECTED = new Integer[]{67, 1};
     final Set<Integer> TEST_EMPTY_SET = new HashSet<>();
 
-    ServerMHRLTestFull() {
+    ServerMHRLTest() {
         TEST_SET.add(1);
         TEST_SET.add(67);
 
@@ -42,23 +42,26 @@ public class ServerMHRLTestFull {
         TEST_MAP.put("3", 3);
     }
     
-    @BeforeAll static public void serverStart() {
-        log.info("Starting server for {}ServerMHRLTestFull{}...", LoggerForTests.YELLOW, LoggerForTests.RESET);
+    @BeforeAll static public void beforeAllMHRLTest() throws InterruptedException {
+        LoggerTestsUtils.startTestBlock(log, "Server MHRL Test");
+        log.info("Starting server for {}Server MHRL Test{}...", LoggerTestsUtils.YELLOW, LoggerTestsUtils.RESET);
         server = new NettyServer(coreStub);
         Thread serverThread = new Thread(server);
         serverThread.start();
-        log.info("Server for {}ServerMHRLTestFull{} started", LoggerForTests.YELLOW, LoggerForTests.RESET);
+        while ( !server.isUp() ) { Thread.sleep(100); }
+        log.info("Server for {}Server MHRL Test{} started", LoggerTestsUtils.YELLOW, LoggerTestsUtils.RESET);
     }
 
-    @AfterAll static public void serverStop() throws InterruptedException {
-        log.info("Closing server for {}ServerMHRLTestFull{}...", LoggerForTests.YELLOW, LoggerForTests.RESET);
+    @AfterAll static public void afterAllMHRLTest() throws InterruptedException {
+        LoggerTestsUtils.testBlockEnded(log, "Server MHRL Test");
+        log.info("Closing server for {}ServerMHRLTestFull{}...", LoggerTestsUtils.YELLOW, LoggerTestsUtils.RESET);
         server.close();
-        log.info("Closed server for {}ServerMHRLTestFull{}", LoggerForTests.YELLOW, LoggerForTests.RESET);
+        log.info("Closed server for {}ServerMHRLTestFull{}", LoggerTestsUtils.YELLOW, LoggerTestsUtils.RESET);
     }
 
     void testResponseValidAndData(JsonObject testJsonObj) {
         jsonTester.testJsonObj = testJsonObj;
-        log.debug("testing {}valid response{}: {}", LoggerForTests.BLUE, LoggerForTests.RESET, testJsonObj.toString());
+        log.debug("testing {}valid response{}: {}", LoggerTestsUtils.BLUE, LoggerTestsUtils.RESET, testJsonObj.toString());
         jsonTester.testLong(200L, "status");
         jsonTester.testHasKey("data");
         jsonTester.testJsonObj = jsonTester.testJsonObj.get("data").getAsJsonObject();
@@ -66,7 +69,7 @@ public class ServerMHRLTestFull {
 
     void testResponseError(JsonObject testJsonObj, long errCode) {
         jsonTester.testJsonObj = testJsonObj;
-        log.debug("testing {}error resp{} {}, expected {}", LoggerForTests.BLUE, LoggerForTests.RESET, testJsonObj.toString(), errCode);
+        log.debug("testing {}error resp{} {}, expected {}", LoggerTestsUtils.BLUE, LoggerTestsUtils.RESET, testJsonObj.toString(), errCode);
         jsonTester.testLong(400L, "status");
         jsonTester.testHasKey("err");
         jsonTester.testLong(errCode, "errCode");

@@ -12,8 +12,8 @@ import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
 import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 import org.mnemosynehermesteam.server.mhrl.MHRLSyntaxParseResult;
 import org.mnemosynehermesteam.server.mhrl.ManipObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObjectBuilder;
+import org.mnemosynehermesteam.server.mhrl.SematicPipeline;
+import org.mnemosynehermesteam.server.mhrl.SematicPipelineBuilder;
 
 public class MHRLOperationHDel extends MHRLOperation {
 
@@ -32,8 +32,8 @@ public class MHRLOperationHDel extends MHRLOperation {
     protected String operationName() { return "HDEL"; }
 
     @Override
-    public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key) {
-        return new ManipulateWithObjectBuilder(core, userId, key)
+    public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key) {
+        return new SematicPipelineBuilder(core, userId, key)
                                         .forClass(Map.class, (manip, req) -> handle(manip, req))
                                         .build();
     }

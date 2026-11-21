@@ -11,8 +11,8 @@ import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
 import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 import org.mnemosynehermesteam.server.mhrl.MHRLSyntaxParseResult;
 import org.mnemosynehermesteam.server.mhrl.ManipObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObject;
-import org.mnemosynehermesteam.server.mhrl.ManipulateWithObjectBuilder;
+import org.mnemosynehermesteam.server.mhrl.SematicPipeline;
+import org.mnemosynehermesteam.server.mhrl.SematicPipelineBuilder;
 
 public class MHRLOperationIsMember extends MHRLOperation {
 
@@ -30,8 +30,8 @@ public class MHRLOperationIsMember extends MHRLOperation {
     protected String operationName() { return "ISMEMBER"; }
 
     @Override
-    public ManipulateWithObject makeManipulateWithObject(Core core, UUID userId, String key) {
-        return new ManipulateWithObjectBuilder(core, userId, key)
+    public SematicPipeline makeManipulateWithObject(Core core, UUID userId, String key) {
+        return new SematicPipelineBuilder(core, userId, key)
                                         .onNull(manip -> MHRLOperationResult.generateOK(new JsonObjectBuilder().add("isMember", false).build()))
                                         .forClass(Set.class, (manip, req) -> handleSet(manip, req))
                                         .forClass(Map.class, (manip, req) -> handleMap(manip, req))
