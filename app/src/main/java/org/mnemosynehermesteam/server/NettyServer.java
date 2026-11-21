@@ -1,5 +1,7 @@
 package org.mnemosynehermesteam.server;
 
+import org.mnemosynehermesteam.core.Core;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -16,6 +18,12 @@ public class NettyServer implements Runnable {
 
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
+    
+    private final Core core;
+
+    public NettyServer(Core core) {
+        this.core = core;
+    }
     
     @Override
     public void run() {
@@ -37,7 +45,7 @@ public class NettyServer implements Runnable {
                 protected void initChannel(SocketChannel ch) {
                     ch.pipeline().addLast(new HttpServerCodec());
                     ch.pipeline().addLast(new HttpObjectAggregator(1024 * 1024));
-                    ch.pipeline().addLast(new HttpHandler());
+                    ch.pipeline().addLast(new HttpHandler(core));
                 }
             });
 

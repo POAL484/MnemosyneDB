@@ -13,7 +13,7 @@ public record Response(HttpResponseStatus status, Object respData) {
     public static Response generateOK(Object data) {
         return new Response(HttpResponseStatus.OK, new OKRespData(200, data));
     }
-    public static Response generateErrorWithCode(String description, int errCode) {
+    public static Response generateBadRequestWithCode(String description, int errCode) {
         return new Response(HttpResponseStatus.BAD_REQUEST, new ErrorWithCodeObject(400, description, errCode));
     }
 }

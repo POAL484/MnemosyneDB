@@ -16,6 +16,9 @@ dependencies {
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testCompileOnly 'org.projectlombok:lombok:1.18.48'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.16'
 }
 
 application {
@@ -25,4 +28,5 @@ application {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging { showStandardStreams = true }
 }

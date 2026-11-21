@@ -17,6 +17,10 @@ record GetDTORequestBody(String key) {}
 @Slf4j 
 public class EndpointGetDTO extends Endpoint {
 
+    public EndpointGetDTO(Core core) {
+        super(core);
+    }
+
     @Override
     public Response handle(FullHttpRequest request) {
         

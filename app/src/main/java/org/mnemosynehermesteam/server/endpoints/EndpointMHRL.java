@@ -2,11 +2,12 @@ package org.mnemosynehermesteam.server.endpoints;
 
 import java.util.UUID;
 
+import org.mnemosynehermesteam.core.Core;
 import org.mnemosynehermesteam.server.DataManipulationUtils;
 import org.mnemosynehermesteam.server.Response;
-import org.mnemosynehermesteam.server.mhrloperations.MHRLOperation;
-import org.mnemosynehermesteam.server.mhrloperations.MHRLOperationResult;
-import org.mnemosynehermesteam.server.mhrloperations.MHRLRequestBody;
+import org.mnemosynehermesteam.server.mhrl.MHRL;
+import org.mnemosynehermesteam.server.mhrl.MHRLOperationResult;
+import org.mnemosynehermesteam.server.mhrl.MHRLRequestBody;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -16,6 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j 
 public class EndpointMHRL extends Endpoint {
     
+    private final MHRL mhrl;
+
+    public EndpointMHRL(Core core) {
+        super(core);
+        this.mhrl = new MHRL(core);
+    }
+
     @Override
     public Response handle(FullHttpRequest request) {
         UUID userId = DataManipulationUtils.authorizate(request.headers());
@@ -27,23 +35,17 @@ public class EndpointMHRL extends Endpoint {
         MHRLRequestBody reqData = DataManipulationUtils.parseGson(request.content().toString(CharsetUtil.UTF_8), MHRLRequestBody.class);
 
         if ( reqData == null ) {
-            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request: JSON syntax error");
+            return Response.generateBadRequestWithCode("Json syntax error or incorrect fields types", -1);
         }
 
-        if ( !MHRLOperation.containsOperation(reqData.op()) ) {
-            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Unknown operation: %s".formatted(reqData.op()));
+        if ( !mhrl.containsOperation(reqData.op()) ) {
+            return Response.generateBadRequestWithCode("Unknown operation: %s".formatted(reqData.op()), -2);
         }
 
-        MHRLOperation opHandler = MHRLOperation.getOperation(reqData.op());
-
-        if ( !opHandler.checkRequest(reqData) ) {
-            return Response.generateError(HttpResponseStatus.BAD_REQUEST, "Bad request for operation %s".formatted(reqData.op()));
-        }
-
-        MHRLOperationResult res = opHandler.handle(userId, reqData);
+        MHRLOperationResult res = mhrl.makeMHRLRequest(reqData.op(), userId, reqData);
 
         if ( !res.status() ) {
-            return Response.generateErrorWithCode(res.errDescription(), res.code());
+            return Response.generateBadRequestWithCode(res.errDescription(), res.code());
         }
 
         return Response.generateOK(res.jsonObj());

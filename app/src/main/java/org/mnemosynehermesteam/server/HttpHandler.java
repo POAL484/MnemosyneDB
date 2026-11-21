@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mnemosynehermesteam.core.Core;
 import org.mnemosynehermesteam.server.endpoints.Endpoint;
 import org.mnemosynehermesteam.server.endpoints.EndpointDelDTO;
 import org.mnemosynehermesteam.server.endpoints.EndpointGetDTO;
@@ -32,12 +33,12 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     final Map<EndpointEntry, Endpoint> ENDPOINTS = new HashMap<>();
 
-    HttpHandler() {
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.GET), new EndpointGetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL());
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.POST), new EndpointSetDTO());
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.PUT), new EndpointSetDTO());
-        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.DELETE), new EndpointDelDTO());
+    public HttpHandler(Core core) {
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.GET), new EndpointGetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.POST), new EndpointSetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.PUT), new EndpointSetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.DELETE), new EndpointDelDTO(core));
     }
 
     private FullHttpResponse createResponseText(HttpResponseStatus status, String bodyText, HttpHeaders headers) {
