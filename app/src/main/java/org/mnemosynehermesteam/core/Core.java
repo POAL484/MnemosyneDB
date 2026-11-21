@@ -48,7 +48,7 @@ public class Core {
             return null;
         }
 
-        CacheDTO fromDisk = disk.loadCacheDTO().get(key);
+        CacheDTO fromDisk = disk.loadCacheDTO().get(new FullKey(userId, key));
         if (fromDisk != null){
             memory.save(key, fromDisk);
         }
@@ -74,6 +74,8 @@ public class Core {
         }
 
         memory.save(key, cacheDTO, ttl);
+            disk.save(new FullKey(cacheDTO.userId(), key), cacheDTO);
+        }
     }
 
     public CacheDTO deleteCache(String key) {
@@ -83,13 +85,13 @@ public class Core {
     }
 
     private void loadFromDisk() {
-        Map<String, CacheDTO> fromDisk = disk.loadCacheDTO();
+        Map<FullKey, CacheDTO> fromDisk = disk.loadCacheDTO();
 
-        List<Map.Entry<String, CacheDTO>> entries = new ArrayList<>(fromDisk.entrySet());
+        List<Map.Entry<FullKey, CacheDTO>> entries = new ArrayList<>(fromDisk.entrySet());
         entries.sort(Comparator.comparingLong(entry -> entry.getValue().ts()));
 
-        for (Map.Entry<String, CacheDTO> entry : entries) {
-            memory.save(entry.getKey(), entry.getValue());
+        for (Map.Entry<FullKey, CacheDTO> entry : entries) {
+            memory.save(entry.getKey().key(), entry.getValue());
         }
     }
 

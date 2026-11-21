@@ -1,15 +1,18 @@
 # Gradle Cache
-.gradle
+.gradle/
 
 # Build Files
 build
 app/bin/
+out/
+*.class
 
-# VSCode files
-.vscode
+# IDE files
+.vscode/
+.idea/
 
 #JAVA_HOME set script
 env.ps1
-out/
-*.class
-.idea/
+
+# Local user data
+userdata.jsonl
