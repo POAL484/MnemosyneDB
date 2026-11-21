@@ -9,12 +9,19 @@ repositories {
 dependencies {
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.139.Final'
     implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
     implementation 'at.yawk.lz4:lz4-java:1.14.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
     implementation 'org.xerial.snappy:snappy-java:1.1.10.12'
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testCompileOnly 'org.projectlombok:lombok:1.18.48'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.16'
 }
 
 application {
@@ -24,4 +31,5 @@ application {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging { showStandardStreams = true }
 }

@@ -4,9 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mnemosynehermesteam.core.Core;
 import org.mnemosynehermesteam.server.endpoints.Endpoint;
 import org.mnemosynehermesteam.server.endpoints.EndpointDelDTO;
 import org.mnemosynehermesteam.server.endpoints.EndpointGetDTO;
+import org.mnemosynehermesteam.server.endpoints.EndpointMHRL;
 import org.mnemosynehermesteam.server.endpoints.EndpointSetDTO;
 
 import com.google.gson.Gson;
@@ -21,19 +23,22 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import lombok.extern.slf4j.Slf4j;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 
+@Slf4j 
 public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     final Map<EndpointEntry, Endpoint> ENDPOINTS = new HashMap<>();
 
-    HttpHandler() {
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.GET), new EndpointGetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointSetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.PUT), new EndpointSetDTO());
-        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.DELETE), new EndpointDelDTO());
+    public HttpHandler(Core core) {
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.GET), new EndpointGetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/", HttpMethod.POST), new EndpointMHRL(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.POST), new EndpointSetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.PUT), new EndpointSetDTO(core));
+        ENDPOINTS.put(new EndpointEntry("/legacy", HttpMethod.DELETE), new EndpointDelDTO(core));
     }
 
     private FullHttpResponse createResponseText(HttpResponseStatus status, String bodyText, HttpHeaders headers) {
@@ -56,6 +61,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         EndpointEntry endpointEntry = new EndpointEntry(req.uri(), req.method());
 
         if ( ! ENDPOINTS.containsKey(endpointEntry) ) {
+            log.debug("Endpoint [{}] {} not found", endpointEntry.method(), endpointEntry.uri());
             sendRespToChannel(ctx, createResponseJson(HttpResponseStatus.NOT_FOUND, Response.generateError(HttpResponseStatus.NOT_FOUND, "Endpoint not found"), new DefaultHttpHeaders()));
         }
         
@@ -63,7 +69,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         try {
             resp = ENDPOINTS.get(endpointEntry).handle(req);
         } catch ( Exception e ) {
-            e.printStackTrace();
+            log.error("Error while handling http request", e);
             sendRespToChannel(ctx, createResponseJson(HttpResponseStatus.INTERNAL_SERVER_ERROR, Response.generateError(HttpResponseStatus.INTERNAL_SERVER_ERROR, "Internal server error("), new DefaultHttpHeaders()));
             return;
         }

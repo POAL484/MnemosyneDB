@@ -4,6 +4,8 @@ import org.mnemosynehermesteam.caching.InMemoryStorage;
 import org.mnemosynehermesteam.config.MnemosyneConfig;
 import org.mnemosynehermesteam.diskstorage.DiskStorage;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.time.Duration;
 
+@Slf4j 
 public class Core {
 
     static final private Core core = new Core();
@@ -38,9 +41,11 @@ public class Core {
     }
 
     public CacheDTO readCache(UUID userId, String key) {
+        log.debug("Started reading cache {}", key);
         Optional<CacheDTO> fromMemory = memory.get(key);
 
         if (fromMemory.isPresent()){
+            log.debug("Cache {} found in memory, val: {}", key, fromMemory.get().cacheObject());
             return fromMemory.get();
         }
 
@@ -52,10 +57,12 @@ public class Core {
         if (fromDisk != null){
             memory.save(key, fromDisk);
         }
+        log.debug("Loaded cache {} from disk: {}", key, fromDisk);
         return fromDisk;
     }
 
     public void saveCache(CacheDTO cacheDTO, String key) {
+        log.debug("Save cache {} with val {} to memory and disk", key, cacheDTO.cacheObject());
         memory.save(key, cacheDTO);
         if (diskEnabled) {
             disk.save(key, cacheDTO);
@@ -81,6 +88,7 @@ public class Core {
     public CacheDTO deleteCache(String key) {
         CacheDTO removed = memory.get(key).orElse(null);
         memory.delete(key);
+        log.warn("Cache object deletion not implemented yet");
         return removed;
     }
 

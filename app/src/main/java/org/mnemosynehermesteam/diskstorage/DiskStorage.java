@@ -5,6 +5,8 @@ import org.mnemosynehermesteam.core.CacheDTO;
 import org.mnemosynehermesteam.config.MnemosyneConfig;
 import org.mnemosynehermesteam.core.FullKey;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -14,6 +16,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
+@Slf4j
 public class DiskStorage {
 
   private final Path filePath;
@@ -96,7 +99,7 @@ public class DiskStorage {
           StandardOpenOption.APPEND
       );
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Disk storage save caused IOException", e);
     }
   }
 
