@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 public abstract class Endpoint {
 
+    @SuppressWarnings("unused")
     private final Core core;
 
     public Endpoint(Core core) {
