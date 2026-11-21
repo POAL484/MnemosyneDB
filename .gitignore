@@ -15,4 +15,4 @@ out/
 env.ps1
 
 # Local user data
-userdata.csv
+userdata.jsonl
