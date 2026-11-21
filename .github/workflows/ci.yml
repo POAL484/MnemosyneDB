@@ -1,26 +1,53 @@
-name: Unit tests for server
+name: Tests and build
 
 on:
   push:
     branches: [ "requestlang" ]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run tests
         run: ./gradlew test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+      
+      - name: Build
+        run: ./gradlew distZip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MnemosyneDB
+          path: app/build/distributions/*.zip
+
+
 
