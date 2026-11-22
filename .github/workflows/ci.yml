@@ -22,7 +22,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew clean test
 
   build:
     runs-on: ubuntu-latest
@@ -41,13 +41,54 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
       
       - name: Build
-        run: ./gradlew distZip distTar
+        run: ./gradlew installDist
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: MnemosyneDB
-          path: app/build/distributions/*
+          path: app/build/install/
+  
+  integrety-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+      
+      - name: Checkout integrety tests code
+        run: |-
+          git init
+          git remote add origin https://github.com/POAL484/MHDbPy
+          git fetch origin integrety-test
+          git switch --detach origin/integrety-test
+        
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      
+      - name: Setup Python Env
+        run: pip install -r requirements.txt
+      
+      - name: Download MnemosyneDB
+        uses: actions/download-artifact@v4
+        with:
+          name: MnemosyneDB
+          path: dist
+
+      - name: Run integrety tests
+        run: |-
+          chmod +x dist/MnemosyneDB/bin/MnemosyneDB
+          ./dist/MnemosyneDB/bin/MnemosyneDB &> /dev/null &
+          sleep 10
+          python integrety-test.py
+          kill `jobs -l | grep -Eo '[[:digit:]]{2,}'`
+
 
 
 

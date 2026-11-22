@@ -27,7 +27,7 @@ dependencies {
 
 application {
     mainClass = 'org.mnemosynehermesteam.App'
-    applicationName = "mnemosyneDB"
+    applicationName = "MnemosyneDB"
 }
 
 tasks.withType(JavaCompile).configureEach {
