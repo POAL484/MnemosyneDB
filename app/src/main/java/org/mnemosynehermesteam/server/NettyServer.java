@@ -1,5 +1,7 @@
 package org.mnemosynehermesteam.server;
 
+import org.mnemosynehermesteam.core.Core;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -9,18 +11,28 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j 
 public class NettyServer implements Runnable {
 
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
+
+    private boolean isUp = false;
+    
+    private final Core core;
+
+    public NettyServer(Core core) {
+        this.core = core;
+    }
     
     @Override
     public void run() {
+        log.info("Starting server at thread");
         try {
             runSync();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -35,24 +47,31 @@ public class NettyServer implements Runnable {
                 protected void initChannel(SocketChannel ch) {
                     ch.pipeline().addLast(new HttpServerCodec());
                     ch.pipeline().addLast(new HttpObjectAggregator(1024 * 1024));
-                    ch.pipeline().addLast(new HttpHandler());
+                    ch.pipeline().addLast(new HttpHandler(core));
                 }
             });
 
             Channel serverChannel = serverBootstrap.bind(5445).sync().channel();
 
-            System.out.println("[netty] Server started on 5445 port!");
+            log.info("Server started on 5445 port!");
+            isUp = true;
 
             serverChannel.closeFuture().sync();
         } finally {
+            isUp = false;
             close();
         }
 
     }
 
     public void close() throws InterruptedException {
+        log.info("Closing server...");
         bossGroup.shutdownGracefully().sync();
         workerGroup.shutdownGracefully().sync();
-        System.out.println("[netty] Server closed!");
+        log.info("Server closed");
+    }
+
+    public boolean isUp() {
+        return isUp;
     }
 }
