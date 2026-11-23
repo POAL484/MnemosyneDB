@@ -64,7 +64,6 @@ public class MHRLOperationGetItem extends MHRLOperation {
     public MHRLSyntaxParseResult syntaxParse(MHRLRequestBody reqData) {
         if ( reqData.key() == null || reqData.item() == null ) return MHRLSyntaxParseResult.generateNullFields("key and item");
         if ( reqData.item().size() == 0 ) return MHRLSyntaxParseResult.generateErr(-3, "GETITEM item argument empty");
-        log.debug("Correct syntax for GETITEM: key={} item={}", reqData.key(), reqData.item());
         return MHRLSyntaxParseResult.generateOK();
     }
     
